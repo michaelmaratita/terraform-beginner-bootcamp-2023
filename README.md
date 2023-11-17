@@ -354,6 +354,97 @@ random_string.bucket_name: Destroying... [id=o92mt21u00s47k90odo53pbs]
 random_string.bucket_name: Destruction complete after 0s
 ```
 
+#### Terraform Login
+
+Steps to login to Terraform via CLI: 
+
+1. Create a Project and Workspace on [Terraform](https://app.terraform.io/).
+
+- Within the created Workspace, there will be Example code provided by CLI-driven runs, e.g.:
+
+```
+terraform {
+  cloud {
+    organization = "example-org"
+
+    workspaces {
+      name = "terra-house-1"
+    }
+  }
+}
+```
+2. Copy the example code and add to **main.tf**
+
+3. Once added, in the CLI type: `terraform login`
+- Type `yes` to proceed to login
+- Type `P` to print options
+> NOTE: There will be a URL path to create a temporary token
+>
+> https://app.terraform.io/app/settings/tokens?source=terraform-login
+- Choose the appropriate timeframe for Token credentials
+- Type `Q` to quit the options pane, and you will be prompted for the token value 
+- Paste token value and Press `ENTER`
+
+**Successful login** will show within CLI:
+
+```
+Retrieved token for user michaelmaratita
+
+
+---------------------------------------------------------------------------------
+
+                                          -                                
+                                          -----                           -
+                                          ---------                      --
+                                          ---------  -                -----
+                                           ---------  ------        -------
+                                             -------  ---------  ----------
+                                                ----  ---------- ----------
+                                                  --  ---------- ----------
+   Welcome to Terraform Cloud!                     -  ---------- -------
+                                                      ---  ----- ---
+   Documentation: terraform.io/docs/cloud             --------   -
+                                                      ----------
+                                                      ----------
+                                                       ---------
+                                                           -----
+                                                               -
+
+
+   New to TFC? Follow these steps to instantly apply an example configuration:
+
+   $ git clone https://github.com/hashicorp/tfc-getting-started.git
+   $ cd tfc-getting-started
+   $ scripts/setup.sh
+```
+**Unsuccessful logins** may show up as follows
+```
+Token for app.terraform.io:
+  Enter a value: 
+
+╷
+│ Error: Token is invalid: unauthorized
+│ 
+│ 
+╵
+```
+
+> NOTE: PATH to where terraform token is saved
+>
+>   **/home/gitpod/.terraform.d/credentials.tfrc.json**
+> 
+Example json format for token:
+
+```json
+{
+  "credentials": {
+    "app.terraform.io": {
+      "token": "ThI$1s@n3x@m9l370k3n"
+    }
+  }
+}
+```
+
 ### Terraform Lock Files
 
 `terraform.lock.hcl` contains the locked versioning for the providers or modules that should be used with this project.
@@ -375,3 +466,23 @@ If you lose this file, you lose information about the state of your infrastructu
 ### Terraform Directory
 
 `.terraform` directory contains binaries of terraform providers.
+
+## Issues with Terraform Cloud Login and Gitpod Workspace
+
+When attempting to run `terraform login`, the instructions may seem unclear. Follow steps provided in [Terraform Login](####Terraform-Login). 
+
+The workaround is to manually [generate a token](https://app.terraform.io/app/settings/tokens) in Terraform Cloud and modify the `/home/gitpod/.terraform.d/credentials.tfrc.json` file.
+
+Then create the file manually here and replace the `"token"` value:
+
+```
+$ vim /home/gitpod/.terraform.d/credentials.tfrc.json
+{
+  "credentials": {
+    "app.terraform.io": {
+      "token": "ThI$1s@n3x@m9l370k3n"
+    }
+  }
+}
+```
+- `wq!` to save and exit
