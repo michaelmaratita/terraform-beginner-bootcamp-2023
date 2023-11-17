@@ -221,6 +221,27 @@ Main commands:
 
 At the start of a new terraform project, we will run `terraform init` to download the binaries for the terraform providers that we'll use in this project.
 
+```
+$ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Reusing previous version of hashicorp/random from the dependency lock file
+- Installing hashicorp/random v3.5.1...
+- Installed hashicorp/random v3.5.1 (signed by HashiCorp)
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+```
+
 #### Terraform Plan
 
 `terraform plan`
@@ -233,6 +254,12 @@ random_string.bucket_name: Refreshing state... [id=5AUoDEyuuWQkNgNv]
 Changes to Outputs:
 - random_bucket_name    = "5AUoDEyuuWQkNgNv" -> null
 + random_bucket_name_id = "5AUoDEyuuWQkNgNv"
+
+> NOTE: For S3 naming conventions, per AWS:
+> - Bucket names can consist only of lowercase letters, numbers, dots (.), and hyphens (-).
+> - Bucket names must begin and end with a letter or number.
+>
+> Ensure **random_string** resource within **main.tf** only meets these parameters, e.g. **NO CAPS**
 ```
 
 #### Terraform Apply
@@ -241,6 +268,91 @@ Changes to Outputs:
 This will run a plan and pass the changeset to be executed by terraform. Only **yes** will apply changes.
 
 If we want to automatically approve an apply, we can provide the `--auto-approve` flag; e.g. `terraform apply --auto-approve`
+
+```
+$ terraform apply --auto-approve
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # random_string.bucket_name will be created
+  + resource "random_string" "bucket_name" {
+      + id          = (known after apply)
+      + length      = 16
+      + lower       = true
+      + min_lower   = 0
+      + min_numeric = 0
+      + min_special = 0
+      + min_upper   = 0
+      + number      = true
+      + numeric     = true
+      + result      = (known after apply)
+      + special     = false
+      + upper       = true
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + random_bucket_name = (known after apply)
+random_string.bucket_name: Creating...
+random_string.bucket_name: Creation complete after 0s [id=80V5DTZJmcykPVtn]
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+random_bucket_name = "80V5DTZJmcykPVtn"
+```
+
+#### Terraform Destroy
+
+`terraform destroy` will destroy resources from terraform plan. This also works with the `--auto-approve` flag, e.g. `terraform destroy --auto-approve`. Be **CAUTIOUS** of utilizing `--auto-approve`. This will not give you an opportunity to review resources before they are destroyed.
+
+```
+$ terraform destroy
+random_string.bucket_name: Refreshing state... [id=o92mt21u00s47k90odo53pbs]
+aws_s3_bucket.example: Refreshing state... [id=o92mt21u00s47k90odo53pbs]
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # aws_s3_bucket.example will be destroyed
+  - resource "aws_s3_bucket" "example" {
+      - arn                         = "arn:aws:s3:::o92mt21u00s47k90odo53pbs" -> null
+      - bucket                      = "o92mt21u00s47k90odo53pbs" -> null
+      - bucket_domain_name          = "o92mt21u00s47k90odo53pbs.s3.amazonaws.com" -> null
+      - bucket_regional_domain_name = "o92mt21u00s47k90odo53pbs.s3.us-west-1.amazonaws.com" -> null
+  ....
+
+  # random_string.bucket_name will be destroyed
+  - resource "random_string" "bucket_name" {
+      - id          = "o92mt21u00s47k90odo53pbs" -> null
+      - length      = 24 -> null
+      - lower       = true -> null
+      - min_lower   = 0 -> null
+      - min_numeric = 0 -> null
+  ...
+
+Plan: 0 to add, 0 to change, 2 to destroy.
+
+Changes to Outputs:
+  - random_bucket_name = "o92mt21u00s47k90odo53pbs" -> null
+
+Do you really want to destroy all resources?
+  Terraform will destroy all your managed infrastructure, as shown above.
+  There is no undo. Only 'yes' will be accepted to confirm.
+
+  Enter a value: yes
+
+aws_s3_bucket.example: Destroying... [id=o92mt21u00s47k90odo53pbs]
+aws_s3_bucket.example: Destruction complete after 0s
+random_string.bucket_name: Destroying... [id=o92mt21u00s47k90odo53pbs]
+random_string.bucket_name: Destruction complete after 0s
+```
 
 ### Terraform Lock Files
 
