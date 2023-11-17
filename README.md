@@ -486,3 +486,5 @@ $ vim /home/gitpod/.terraform.d/credentials.tfrc.json
 }
 ```
 - `wq!` to save and exit
+
+Automated the process using workaround with the following bash script [generate_tfrc_credentials](bin/generate_tfrc_credentials)
