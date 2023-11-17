@@ -13,6 +13,7 @@ The general format:
 - **MINOR** version when you add functionality in a backward compatible manner
 - **PATCH** version when you make backward compatible bug fixes
 
+
 ## Install the Terraform CLI
 
 ### Considerations with the Terraform CLI changes
@@ -29,6 +30,7 @@ This project is built against Ubuntu. Please consider checking your Linux Distri
 Example of checking OS Version:
 ```
 $ cat /etc/*-release
+
 DISTRIB_ID=Ubuntu
 DISTRIB_RELEASE=22.04
 DISTRIB_CODENAME=jammy
@@ -46,26 +48,44 @@ BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
 PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
 UBUNTU_CODENAME=jammy
 ``````
+
 ### Refactoring into bash scripts
+
 While fixing the Terraform CLI gpg deprication issues, we noticed the bash scripts steps were a considerable amount of code. So we decided to create a bash script to install Terraform CLI.
+
 > Bash script location: [install_terraform_cli](./bin/install_terraform_cli)
+
 - This will keep the Gitpod Task File ([.gitpod.yml](./.gitpod.yml))tidy.
 - Allows easier debugging and manual execution of Terraform CLI installation.
 - Allows better portability for other projects that need to install Terraform CLI.
+
 #### Shebang Conisderations
+
 A Shebang is a special character sequence used at the beginning of a script or program file to indicate the interpreter that should be used to execute the script. e.g. `#!/bin/bash`
+
 ChatGPT recommneded this format for bash: `#!/usr/bin/env bash`
+
 - for portability with different OS distributions
 - will search the user's PATH for bash executable
-[Shebang Unix](https://en.wikipedia.org/wiki/Shebang_(Unix))
+
+[Shebang(Unix)](https://en.wikipedia.org/wiki/Shebang_(Unix))
+
 #### Execution Considerations
+
 When executing the bash script, we can use the `./` shorthand to execute the bash script
+
 e.g. `./bin/install_terraform_cli`
+
 If we are using a script in .gitpod.yml we need to point to the script to a program to interpret it.
+
 e.g. `source ./bin/install_terraform_cli`
+
 #### Linux Permissions Considerations
+
 In order to make our bash scripts executable, we need to change Linux permissions for the file to be executable at the user level.
+
 [Linux File Permissions (chmod)](https://en.wikipedia.org/wiki/Chmod)
+
 e.g.
 - `chmod 744`
 - `chmod u+x ./bin/install_terraform_cli`
@@ -77,8 +97,8 @@ drwxr-xr-x 4 gitpod gitpod 113 Nov  2 16:01 ..
 -rw-r--r-- 1 gitpod gitpod 578 Nov  2 16:10 install_terraform_cli
 $ chmod 744 ./bin/install_terraform_cli
 -rwxr--r-- 1 gitpod gitpod 578 Nov  2 16:11 ./bin/install_terraform_cli
-
 ```
+
 ### Gitpod Workspace Lifecycle (Before, Init, Command)
 
 We need to be careful when using the ***init*** because it will not rerun if we restart an existing workspace.
@@ -86,12 +106,19 @@ We need to be careful when using the ***init*** because it will not rerun if we 
 [Gitpod Workspace Lifecycle](https://www.gitpod.io/docs/configure/workspaces/tasks)
 
 ### Working with Env Vars
+
  We can list out all Environmental Variables (Env Vars) using the `env` command
+
  We can filter specific env vars using grep, e.g. `env | grep AWS_`
+
 #### Setting and Unsetting Env Vars
- In the terminal we can set env vars using `export TEST=./test/location`
- In the terminal we can unset env vars using `unset TEST`
- We can set an env var temporarily when running a command, e.g.:
+
+In the terminal we can set env vars using `export TEST=./test/location`
+
+In the terminal we can unset env vars using `unset TEST`
+
+We can set an env var temporarily when running a command, e.g.:
+
 ```sh
 TEST=./test/location ./bin/test_echo
 ```
@@ -153,3 +180,86 @@ If it is successful you should see a json payload return that looks like this:
 ```
 
 We'll need to generate AWS CLI credentials from IAM User in order to use AWS CLI.
+
+## Terraform Basics
+
+### Terraform Registry
+
+Terraform sources their providers and modules from the Terraform Registry which is located at [Terraform Registry](https://registry.terraform.io/)
+
+- **Providers** are interfaces to APIs that will allow creation of resources in Terraform
+
+Example Provider: [random](https://registry.terraform.io/providers/hashicorp/random/latest)
+
+- **Modules** are a way to make large amount of Terraform code modular, portable and shareable.
+
+Example Module: [AWS IAM](https://registry.terraform.io/modules/terraform-aws-modules/iam/aws/latest)
+
+
+### Terraform Console
+
+We can see a list of all the Terraform commands by typing `terraform`
+
+```
+$ terraform
+Usage: terraform [global options] <subcommand> [args]
+
+The available commands for execution are listed below.
+The primary workflow commands are given first, followed by
+less common or more advanced commands.
+
+Main commands:
+  init          Prepare your working directory for other commands
+  validate      Check whether the configuration is valid
+  plan          Show changes required by the current configuration
+  apply         Create or update infrastructure
+  destroy       Destroy previously-created infrastructure
+...
+```
+
+#### Terraform Init
+
+At the start of a new terraform project, we will run `terraform init` to download the binaries for the terraform providers that we'll use in this project.
+
+#### Terraform Plan
+
+`terraform plan`
+Displays changeset for the state of our infrastructure and what will be changed.
+
+```
+$ terraform plan
+random_string.bucket_name: Refreshing state... [id=5AUoDEyuuWQkNgNv]
+
+Changes to Outputs:
+- random_bucket_name    = "5AUoDEyuuWQkNgNv" -> null
++ random_bucket_name_id = "5AUoDEyuuWQkNgNv"
+```
+
+#### Terraform Apply
+
+`terraform apply`
+This will run a plan and pass the changeset to be executed by terraform. Only **yes** will apply changes.
+
+If we want to automatically approve an apply, we can provide the `--auto-approve` flag; e.g. `terraform apply --auto-approve`
+
+### Terraform Lock Files
+
+`terraform.lock.hcl` contains the locked versioning for the providers or modules that should be used with this project.
+
+The Terraform Lock File **should be committed** to your Version Control System (VSC), e.g. GitHub
+
+### Terraform State Files
+
+`.terraform.tfstate` contains information about the current state of your infrastructure. 
+
+This file **SHOULD NOT be committed** to your VSC.
+
+This file can contain sensitive data. 
+
+If you lose this file, you lose information about the state of your infrastructure.
+
+`.terrafrom.tfstate.backup` is the previous state file version.
+
+### Terraform Directory
+
+`.terraform` directory contains binaries of terraform providers.
