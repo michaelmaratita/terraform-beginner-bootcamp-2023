@@ -81,3 +81,35 @@ Example:
 
 In the case where the infrustructure is not in the state Terraform expects, e.g. deleted or modified resources, we can run `terraform plan` to create an execution plan to get the infrustructure back into its expected state;
 thus fixing the *configuration drift*
+
+## Fix using Terraform Refresh
+
+`terraform apply -refresh-only --auto-approve`
+
+## Terraform Modules
+
+### Terraform Module Structure
+
+It is recommended to place modules in a modules directory when locally developing modules.
+
+### Passing Input Variables
+
+We cam pass input variable to our module.
+The module has to declare the terraform variables in its own variables.tf
+
+```tf
+module "terrahouse_aws" {
+  source = "./modules/terrashouse_aws"
+  user_uuid = var.user_uuid
+  bucket_name = var.bucket_name
+}
+```
+
+### Module Sources
+
+Using the source we can import the module from various places, e.g.:
+- locally
+- Github
+- Terraform Registry
+
+[Terraform Modules Sources](https://developer.hashicorp.com/terraform/language/modules/sources)
