@@ -113,3 +113,49 @@ Using the source we can import the module from various places, e.g.:
 - Terraform Registry
 
 [Terraform Modules Sources](https://developer.hashicorp.com/terraform/language/modules/sources)
+
+## Considerations when using ChatGPT to write Terraform
+
+LLMs such as ChatGPT may not be trained on the latest documentation or information about Terraform.
+
+It may produce older examples that could be deprecated. Often affecting providers.
+
+## Working with Files in Terraform
+
+### Fileexists function
+
+Determines whether a file exists at a given path.
+
+[fileexists reference](https://developer.hashicorp.com/terraform/language/functions/fileexists)
+
+```
+fileexists("${path.module}/hello.txt")
+true
+```
+
+### Filemd5 function
+
+A variant of `md5` that hashes the contents of a given file rather than a literal string.
+
+[filemd5 reference](https://developer.hashicorp.com/terraform/language/functions/filemd5)
+
+`etag = filemd5("${path.root}/public/index.html")`
+
+### Path Variable
+
+In Terraform, there is a special variable called `path` that allows us to reference local paths:
+
+- path.module - get the path for the current module
+- path.root - get the path for the root module
+
+[Filesystem and Workspace Info](https://developer.hashicorp.com/terraform/language/expressions/references#filesystem-and-workspace-info)
+
+Example:
+
+resource "aws_s3_object" "index_html" {
+  bucket = aws_s3_bucket.website_bucket.bucket
+  key    = "index.html"
+  source = "${path.root}/public/index.html"
+
+  etag = filemd5("${path.root}/public/index.html")
+}
