@@ -1,5 +1,23 @@
 # Terraform Beginner Bootcamp 2023 - Week 1
 
+## Fixing Tags
+
+Example:
+
+Local Tag
+```sh
+$ git tag -d <tag_name>
+```
+
+Remote Tag
+```sh
+$ git push --delete origin tagname
+```
+
+Checkout the commit that you want to retag. Grab the sha from your GitHub history.
+
+[GitHub tag delete reference](https://devconnected.com/how-to-delete-local-and-remote-tags-on-git/)
+
 ## Root Module Structure
 
 Our root module structure is as follows:
@@ -159,3 +177,37 @@ resource "aws_s3_object" "index_html" {
 
   etag = filemd5("${path.root}/public/index.html")
 }
+
+### Terraform Locals
+
+Terraform local values (or "locals") assign a name to an expression or value. Using locals simplifies your Terraform configuration – since you can reference the local multiple times, you reduce duplication in your code.
+
+[Terraform Locals](https://developer.hashicorp.com/terraform/tutorials/configuration-language/locals)
+
+### Terraform Data Sources
+
+A data source is accessed via a special kind of resource known as a data resource, declared using a `data` block:
+```
+data "aws_caller_identity" "current" {}
+
+output "account_id" {
+  value = data.aws_caller_identity.current.account_id
+}
+```
+
+This is useful when we want to reference cloud resourceswithout importing them.
+
+[Terraform Data Sources](https://developer.hashicorp.com/terraform/language/data-sources)
+
+### Working with JSON
+
+`jsonencode` encodes a given value to a string using JSON syntax.
+
+We utilized the jsonencode function to create an inline json policy in HCL.
+
+```
+> jsonencode({"hello"="world"})
+{"hello":"world"}
+```
+
+[jsonencode](https://developer.hashicorp.com/terraform/language/functions/jsonencode)
