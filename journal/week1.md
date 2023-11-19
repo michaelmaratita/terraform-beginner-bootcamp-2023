@@ -276,3 +276,25 @@ resource "aws_instance" "web" {
 }
 ```
 [remote-exec](https://developer.hashicorp.com/terraform/language/resources/provisioners/remote-exec)
+
+## For Each expressions
+
+`for_each`` is a meta-argument defined by the Terraform language. It can be used with modules and with every resource type.
+
+The for_each meta-argument accepts a map or a set of strings, and creates an instance for each item in that map or set. Each instance has a distinct infrastructure object associated with it, and each is separately created, updated, or destroyed when the configuration is applied.
+
+```tf
+for_each = fileset("${path.root}/public/assets", "*.{jpg,jpeg,png,gif}")
+```
+
+[Terraform for_each](https://developer.hashicorp.com/terraform/language/meta-arguments/for_each)
+
+## Fileset
+
+`fileset` enumerates a set of regular file names given a path and pattern. The path is automatically removed from the resulting set of file names and any result still containing path separators always returns forward slash (/) as the path separator for cross-system compatibility.
+
+```tf
+fileset("${path.root}/public/assets", "*.{jpg,jpeg,png,gif}")
+```
+
+[Terraform fileset](https://developer.hashicorp.com/terraform/language/functions/fileset)
