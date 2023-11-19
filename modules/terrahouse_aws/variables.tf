@@ -44,3 +44,13 @@ variable "content_version" {
     error_message = "Content version must be a positive integer starting at 1."
   }
 }
+variable "assets_path" {
+  description = "The file path exists."
+  type = string
+
+  # NO CURRENT VALIDATION FOR DIR EXISTS
+  # validation {
+  #   condition = fileexists(var.assets_path)
+  #   error_message = "The provided path does not exist."
+  # }
+}
