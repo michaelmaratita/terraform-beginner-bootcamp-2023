@@ -35,7 +35,7 @@ It consists of extensive lore, PvE and PvP content. This is why I like
 to play Destiny 2!
 DESCRIPTION
   domain_name = module.home_destiny_hosting.domain_name
-  town = "missingo"
+  town = "gamers-grotto"
   content_version = var.destiny.content_version
 }
 
@@ -52,6 +52,6 @@ Naruto" follows the journey of Naruto Uzumaki, a determined young ninja ostraciz
 Despite facing adversity, Naruto aspires to become the strongest ninja and earn the title of Hokage. 
 DESCRIPTION
   domain_name = module.home_naruto_hosting.domain_name
-  town = "missingo"
+  town = "video-valley"
   content_version = var.naruto.content_version
 }
