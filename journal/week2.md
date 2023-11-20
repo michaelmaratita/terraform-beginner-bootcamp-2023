@@ -48,3 +48,11 @@ budle exec ruby server.rb
 ```
 
 All of the code for our server is stored in the `server.rb` file.
+
+## CRUD
+
+Terraform Provider resources utilize CRUD
+
+Create, Read, Update, and Delete
+
+[CRUD Reference](https://www.codecademy.com/article/what-is-crud)
