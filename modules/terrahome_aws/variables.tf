@@ -17,24 +17,28 @@ variable "user_uuid" {
 #     error_message = "S3 bucket name must be between 3 and 63 characters and contain only lowercase letters, numbers, hyphens, and periods."
 #   }
 # }
-variable "index_html_filepath" {
-  description = "The file path exists for index.html"
+variable "public_path" {
+  description = "The file path exists for the public directory"
   type = string
-
-  validation {
-    condition = fileexists(var.index_html_filepath)
-    error_message = "The provided path for index.html does not exist."
-  }
 }
-variable "error_html_filepath" {
-  description = "The file path exists for error.html"
-  type = string
+# variable "index_html_filepath" {
+#   description = "The file path exists for index.html"
+#   type = string
 
-  validation {
-    condition = fileexists(var.error_html_filepath)
-    error_message = "The provided path for error.html does not exist."
-  }
-}
+#   validation {
+#     condition = fileexists(var.index_html_filepath)
+#     error_message = "The provided path for index.html does not exist."
+#   }
+# }
+# variable "error_html_filepath" {
+#   description = "The file path exists for error.html"
+#   type = string
+
+#   validation {
+#     condition = fileexists(var.error_html_filepath)
+#     error_message = "The provided path for error.html does not exist."
+#   }
+# }
 variable "content_version" {
   description = "The version of the content starting at 1"
   type        = number
@@ -44,13 +48,13 @@ variable "content_version" {
     error_message = "Content version must be a positive integer starting at 1."
   }
 }
-variable "assets_path" {
-  description = "The file path exists."
-  type = string
+# variable "assets_path" {
+#   description = "The file path exists."
+#   type = string
 
-  # NO CURRENT VALIDATION FOR DIR EXISTS
-  # validation {
-  #   condition = fileexists(var.assets_path)
-  #   error_message = "The provided path does not exist."
-  # }
-}
+#   # NO CURRENT VALIDATION FOR DIR EXISTS
+#   # validation {
+#   #   condition = fileexists(var.assets_path)
+#   #   error_message = "The provided path does not exist."
+#   # }
+# }
